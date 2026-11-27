@@ -8,10 +8,10 @@
 
 | Name | Student ID | Coordination role |
 | --- | --- | --- |
-| Nureen [full name] | [ID] | QA / Test Lead |
-| [Name] | [ID] | Test Design Coordinator |
-| [Name] | [ID] | Automation / Tool Coordinator |
-| [Name] | [ID] | Defect & Metrics Coordinator |
+| Nureen Nellysha binti Norazizi | 22006973 | QA / Test Lead |
+| Nurul Afiqah Insyirah Binti Abu | 22002020 | Test Design Coordinator |
+| Shervona Faith Julian | 22006681 | Automation / Tool Coordinator |
+| Nur Syafiqah Binti Mohd Nor Fadzil | 22005709 | Defect & Metrics Coordinator |
 
 All members designed and executed tests in every phase.
 
