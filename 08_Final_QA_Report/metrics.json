@@ -1,0 +1,441 @@
+{
+  "run_date": "2026-11-21",
+  "overall": {
+    "planned": 184,
+    "executed": 180,
+    "passed": 128,
+    "failed": 52,
+    "blocked": 0,
+    "not_run": 4,
+    "execution_rate": 97.8,
+    "pass_rate": 71.1
+  },
+  "by_group": {
+    "Black-box (Wk 1)": {
+      "planned": 49,
+      "executed": 49,
+      "passed": 40,
+      "failed": 9,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 81.6
+    },
+    "White-box (Wk 2)": {
+      "planned": 29,
+      "executed": 29,
+      "passed": 26,
+      "failed": 3,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 89.7
+    },
+    "GUI & config (Wk 3)": {
+      "planned": 15,
+      "executed": 15,
+      "passed": 11,
+      "failed": 4,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 73.3
+    },
+    "Accessibility (Wk 3)": {
+      "planned": 11,
+      "executed": 11,
+      "passed": 6,
+      "failed": 5,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 54.5
+    },
+    "Compatibility (Wk 3)": {
+      "planned": 5,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "blocked": 0,
+      "not_run": 4,
+      "execution_rate": 20.0,
+      "pass_rate": 100.0
+    },
+    "Web & API (Wk 4)": {
+      "planned": 46,
+      "executed": 46,
+      "passed": 28,
+      "failed": 18,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 60.9
+    },
+    "Security (Wk 5)": {
+      "planned": 14,
+      "executed": 14,
+      "passed": 6,
+      "failed": 8,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 42.9
+    },
+    "Performance (Wk 5)": {
+      "planned": 5,
+      "executed": 5,
+      "passed": 3,
+      "failed": 2,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 60.0
+    },
+    "UI automation (Wk 6)": {
+      "planned": 10,
+      "executed": 10,
+      "passed": 7,
+      "failed": 3,
+      "blocked": 0,
+      "not_run": 0,
+      "execution_rate": 100.0,
+      "pass_rate": 70.0
+    }
+  },
+  "defects_total": 26,
+  "severity": {
+    "Critical": 5,
+    "Major": 5,
+    "Moderate": 7,
+    "Minor": 9
+  },
+  "priority": {
+    "High": 8,
+    "Medium": 9,
+    "Low": 9
+  },
+  "defects_by_feature": {
+    "Task input validation (create/edit)": 7,
+    "GUI, usability & accessibility": 5,
+    "Registration & login": 4,
+    "Search, list & API": 4,
+    "Access control & security config": 3,
+    "Urgency & dashboard rules": 2,
+    "Performance": 1
+  },
+  "python_loc": 557,
+  "defect_density_per_kloc": 46.7,
+  "coverage": {
+    "helpers.py (unit tests only)": {
+      "statements": 31,
+      "covered": 31,
+      "missing": 0,
+      "branches": 18,
+      "branches_covered": 18,
+      "stmt_pct": 100.0,
+      "branch_pct": 100.0,
+      "combined_pct": 100.0,
+      "missing_lines": []
+    },
+    "helpers.py (all suites)": {
+      "statements": 31,
+      "covered": 31,
+      "missing": 0,
+      "branches": 18,
+      "branches_covered": 18,
+      "stmt_pct": 100.0,
+      "branch_pct": 100.0,
+      "combined_pct": 100.0,
+      "missing_lines": []
+    },
+    "app.py (all suites)": {
+      "statements": 299,
+      "covered": 294,
+      "missing": 5,
+      "branches": 64,
+      "branches_covered": 57,
+      "stmt_pct": 98.3,
+      "branch_pct": 89.1,
+      "combined_pct": 96.7,
+      "missing_lines": [
+        242,
+        266,
+        375,
+        481,
+        482
+      ]
+    }
+  },
+  "performance": {
+    "1": {
+      "/api/login": {
+        "n": 1,
+        "fail": 0,
+        "avg": 117.3,
+        "p95": 120.0,
+        "max": 117,
+        "rps": 0.03
+      },
+      "GET /api/dashboard": {
+        "n": 10,
+        "fail": 0,
+        "avg": 5.0,
+        "p95": 6.0,
+        "max": 6,
+        "rps": 0.26
+      },
+      "GET /api/tasks": {
+        "n": 17,
+        "fail": 0,
+        "avg": 4.4,
+        "p95": 5.0,
+        "max": 5,
+        "rps": 0.44
+      },
+      "Aggregated": {
+        "n": 28,
+        "fail": 0,
+        "avg": 8.6,
+        "p95": 6.0,
+        "max": 117,
+        "rps": 0.72
+      }
+    },
+    "10": {
+      "/api/login": {
+        "n": 10,
+        "fail": 0,
+        "avg": 567.3,
+        "p95": 610.0,
+        "max": 614,
+        "rps": 0.26
+      },
+      "GET /api/dashboard": {
+        "n": 93,
+        "fail": 0,
+        "avg": 6.0,
+        "p95": 11.0,
+        "max": 30,
+        "rps": 2.38
+      },
+      "GET /api/tasks": {
+        "n": 144,
+        "fail": 0,
+        "avg": 4.2,
+        "p95": 6.0,
+        "max": 12,
+        "rps": 3.69
+      },
+      "POST /api/tasks": {
+        "n": 21,
+        "fail": 0,
+        "avg": 8.2,
+        "p95": 9.0,
+        "max": 49,
+        "rps": 0.54
+      },
+      "Aggregated": {
+        "n": 268,
+        "fail": 0,
+        "avg": 26.2,
+        "p95": 13.0,
+        "max": 614,
+        "rps": 6.87
+      }
+    },
+    "25": {
+      "/api/login": {
+        "n": 25,
+        "fail": 0,
+        "avg": 1105.9,
+        "p95": 1200.0,
+        "max": 1183,
+        "rps": 0.64
+      },
+      "GET /api/dashboard": {
+        "n": 196,
+        "fail": 0,
+        "avg": 6.9,
+        "p95": 10.0,
+        "max": 92,
+        "rps": 5.03
+      },
+      "GET /api/tasks": {
+        "n": 390,
+        "fail": 0,
+        "avg": 5.4,
+        "p95": 9.0,
+        "max": 100,
+        "rps": 10.02
+      },
+      "POST /api/tasks": {
+        "n": 53,
+        "fail": 0,
+        "avg": 6.7,
+        "p95": 12.0,
+        "max": 26,
+        "rps": 1.36
+      },
+      "Aggregated": {
+        "n": 664,
+        "fail": 0,
+        "avg": 47.4,
+        "p95": 37.0,
+        "max": 1183,
+        "rps": 17.06
+      }
+    },
+    "50": {
+      "/api/login": {
+        "n": 50,
+        "fail": 0,
+        "avg": 2105.8,
+        "p95": 2500.0,
+        "max": 2529,
+        "rps": 1.28
+      },
+      "GET /api/dashboard": {
+        "n": 357,
+        "fail": 0,
+        "avg": 10.1,
+        "p95": 12.0,
+        "max": 246,
+        "rps": 9.15
+      },
+      "GET /api/tasks": {
+        "n": 766,
+        "fail": 0,
+        "avg": 7.0,
+        "p95": 9.0,
+        "max": 234,
+        "rps": 19.63
+      },
+      "POST /api/tasks": {
+        "n": 121,
+        "fail": 0,
+        "avg": 9.1,
+        "p95": 11.0,
+        "max": 125,
+        "rps": 3.1
+      },
+      "Aggregated": {
+        "n": 1294,
+        "fail": 0,
+        "avg": 89.1,
+        "p95": 97.0,
+        "max": 2529,
+        "rps": 33.15
+      }
+    },
+    "100_stress": {
+      "/api/login": {
+        "n": 100,
+        "fail": 0,
+        "avg": 482.9,
+        "p95": 560.0,
+        "max": 562,
+        "rps": 2.56
+      },
+      "GET /api/dashboard": {
+        "n": 632,
+        "fail": 0,
+        "avg": 12.2,
+        "p95": 45.0,
+        "max": 136,
+        "rps": 16.18
+      },
+      "GET /api/tasks": {
+        "n": 1421,
+        "fail": 0,
+        "avg": 5.9,
+        "p95": 16.0,
+        "max": 202,
+        "rps": 36.39
+      },
+      "POST /api/tasks": {
+        "n": 243,
+        "fail": 0,
+        "avg": 9.9,
+        "p95": 38.0,
+        "max": 66,
+        "rps": 6.22
+      },
+      "Aggregated": {
+        "n": 2396,
+        "fail": 0,
+        "avg": 27.9,
+        "p95": 66.0,
+        "max": 562,
+        "rps": 61.36
+      }
+    }
+  },
+  "automated_cases": 147,
+  "automation_rate": 79.9,
+  "regression_suite_size": 52,
+  "regression_ids": [
+    "AT-001",
+    "AT-002",
+    "AT-003",
+    "AT-004",
+    "AT-005",
+    "AT-008",
+    "TC-API-005",
+    "TC-API-010",
+    "TC-API-013",
+    "TC-API-017",
+    "TC-API-018",
+    "TC-API-024",
+    "TC-API-033",
+    "TC-API-035",
+    "TC-API-037",
+    "TC-API-042",
+    "TC-API-045",
+    "TC-BB-009",
+    "TC-BB-010",
+    "TC-BB-011",
+    "TC-BB-012",
+    "TC-BB-014",
+    "TC-BB-023",
+    "TC-BB-024",
+    "TC-BB-025",
+    "TC-BB-026",
+    "TC-BB-027",
+    "TC-BB-028",
+    "TC-BB-029",
+    "TC-BB-037",
+    "TC-BB-046",
+    "TC-BB-049",
+    "TC-SEC-003",
+    "TC-SEC-008",
+    "TC-SEC-010",
+    "TC-SEC-012",
+    "TC-WB-001",
+    "TC-WB-003",
+    "TC-WB-004",
+    "TC-WB-005",
+    "TC-WB-006",
+    "TC-WB-007",
+    "TC-WB-009",
+    "TC-WB-010",
+    "TC-WB-011",
+    "TC-WB-012",
+    "TC-WB-019",
+    "TC-WB-020",
+    "TC-WB-021",
+    "TC-WB-022",
+    "TC-WB-023",
+    "TC-WB-025"
+  ],
+  "failed_by_group": {
+    "Black-box (Wk 1)": 9,
+    "White-box (Wk 2)": 3,
+    "GUI & config (Wk 3)": 4,
+    "Accessibility (Wk 3)": 5,
+    "Compatibility (Wk 3)": 0,
+    "Web & API (Wk 4)": 18,
+    "Security (Wk 5)": 8,
+    "Performance (Wk 5)": 2,
+    "UI automation (Wk 6)": 3
+  }
+}

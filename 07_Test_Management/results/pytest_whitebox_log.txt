@@ -1,0 +1,82 @@
+..F......F..........F........                                            [100%]
+=================================== FAILURES ===================================
+____________________ test_compute_urgency_paths[TC-WB-004] _____________________
+
+due = '2026-11-21', expected = 'Due Today'
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("due,expected", [
+        pytest.param(None, "No due date", id="TC-WB-001"),
+        pytest.param(d(-1), "Overdue", id="TC-WB-003"),
+        pytest.param(d(0), "Due Today", id="TC-WB-004"),
+        pytest.param(d(1), "Due Soon", id="TC-WB-005"),
+        pytest.param(d(2), "Due Soon", id="TC-WB-006"),
+        pytest.param(d(3), "Upcoming", id="TC-WB-007"),
+    ])
+    def test_compute_urgency_paths(due, expected):
+        actual = compute_urgency(due, today=TODAY)
+>       assert actual == expected, f"Actual: '{actual}'"
+E       AssertionError: Actual: 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+02_White_Box_Coverage/test_whitebox_helpers.py:50: AssertionError
+______________________ test_is_valid_password[TC-WB-010] _______________________
+
+pw = 'abcdefgh', expected = True
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("pw,expected", [
+        pytest.param(None, False, id="TC-WB-009"),
+        pytest.param("abcdefgh", True, id="TC-WB-010"),
+        pytest.param("abcdefghi", True, id="TC-WB-011"),
+        pytest.param("abcdefg", False, id="TC-WB-012"),
+    ])
+    def test_is_valid_password(pw, expected):
+        actual = is_valid_password(pw)
+>       assert actual is expected, f"Actual: {actual}"
+E       AssertionError: Actual: False
+E       assert False is True
+
+02_White_Box_Coverage/test_whitebox_helpers.py:76: AssertionError
+___________________ test_completed_in_last_n_days[TC-WB-021] ___________________
+
+completed = '2026-11-14 12:00:00', expected = True
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("completed,expected", [
+        pytest.param(None, False, id="TC-WB-019"),
+        pytest.param(ts(timedelta(hours=1)), True, id="TC-WB-020"),
+        pytest.param(ts(timedelta(days=7)), True, id="TC-WB-021"),
+        pytest.param(ts(timedelta(days=8)), False, id="TC-WB-022"),
+        pytest.param(ts(timedelta(hours=-1)), False, id="TC-WB-023"),
+        pytest.param(ts(timedelta(days=6, hours=23)), True, id="TC-WB-025"),
+    ])
+    def test_completed_in_last_n_days(completed, expected):
+        actual = completed_in_last_n_days(completed, n=7, now=NOW)
+>       assert actual is expected, f"Actual: {actual}"
+E       AssertionError: Actual: False
+E       assert False is True
+
+02_White_Box_Coverage/test_whitebox_helpers.py:106: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.18-final-0 _______________
+
+Name             Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------
+app/app.py         299    164     64      9    41%   40->43, 49->exit, 103-104, 108-109, 119-121, 129, 140-160, 165-176, 181-182, 192-219, 228-242, 248-266, 272-281, 287-290, 296-305, 321, 323, 335-344, 349-351, 357-386, 392-398, 407, 431, 457-461, 467-474, 481-482
+app/helpers.py      31      0     18      0   100%
+------------------------------------------------------------
+TOTAL              330    164     82      9    48%
+Coverage HTML written to dir 02_White_Box_Coverage/htmlcov_helpers
+Coverage JSON written to file 07_Test_Management/results/coverage_helpers.json
+=========================== short test summary info ============================
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-004]
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_is_valid_password[TC-WB-010]
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-021]
+3 failed, 26 passed in 0.56s

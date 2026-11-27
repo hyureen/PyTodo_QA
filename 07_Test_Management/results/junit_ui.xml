@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="10" time="21.501" timestamp="2026-11-21T02:30:41.955120+08:00" hostname="vm"><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_001_register_lands_on_tasks" time="0.932" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_002_eight_char_password" time="0.788"><failure message="AssertionError: Actual: stayed on register page, message 'Password must be at least 8 characters.'&#10;assert 'Create an account' == 'My Tasks'&#10;  &#10;  - My Tasks&#10;  + Create an account">driver = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")&gt;
+
+    @pytest.mark.regression
+    def test_AT_002_eight_char_password(driver):
+        driver.delete_all_cookies()
+        page = RegisterPage(driver).open()
+        page.submit("ui_" + uuid.uuid4().hex[:8], "abcdefgh")
+        snap(driver, "AT-002_password_8_chars.png")
+&gt;       assert page.heading() == "My Tasks", f"Actual: stayed on register page, message '{page.error()}'"
+E       AssertionError: Actual: stayed on register page, message 'Password must be at least 8 characters.'
+E       assert 'Create an account' == 'My Tasks'
+E         
+E         - My Tasks
+E         + Create an account
+
+06_Automation_Regression/test_ui_selenium.py:89: AssertionError</failure></testcase><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_003_login_logout" time="1.612" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_004_due_today_badge" time="1.162"><failure message="AssertionError: Actual: 'Overdue'&#10;assert 'Overdue' == 'Due Today'&#10;  &#10;  - Due Today&#10;  + Overdue">driver = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")&gt;
+fresh_user = 'ui_3f3257dd'
+
+    @pytest.mark.regression
+    def test_AT_004_due_today_badge(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task("Submit lab report", due_iso=iso(0))
+        snap(driver, "AT-004_due_today_badge.png")
+&gt;       assert page.badge("Submit lab report") == "Due Today", f"Actual: '{page.badge('Submit lab report')}'"
+E       AssertionError: Actual: 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+06_Automation_Regression/test_ui_selenium.py:109: AssertionError</failure></testcase><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_005_complete_and_reopen" time="1.413" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_006_delete_with_confirm" time="1.297" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_007_category_filter" time="1.788" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_008_title_markup_not_rendered" time="1.647"><failure message="AssertionError: Actual: the &lt;b&gt; tag in the title was rendered as real HTML&#10;assert not [&lt;selenium.webdriver.remote.webelement.WebElement (session=&quot;b2766ddba6b26a3a42ba44379a5a7ce0&quot;, element=&quot;f.909E5CFEB37D49EF1900B20A84CCCADA.d.FA8938E729C1A145128176F5385C848B.e.44&quot;)&gt;]">driver = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")&gt;
+fresh_user = 'ui_aa4652d4'
+
+    @pytest.mark.regression
+    def test_AT_008_title_markup_not_rendered(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task('&lt;b id="xss-probe"&gt;Bold title&lt;/b&gt;')
+        snap(driver, "AT-008_html_in_title.png")
+        rendered = driver.find_elements(By.ID, "xss-probe")
+&gt;       assert not rendered, "Actual: the &lt;b&gt; tag in the title was rendered as real HTML"
+E       AssertionError: Actual: the &lt;b&gt; tag in the title was rendered as real HTML
+E       assert not [&lt;selenium.webdriver.remote.webelement.WebElement (session="b2766ddba6b26a3a42ba44379a5a7ce0", element="f.909E5CFEB37D49EF1900B20A84CCCADA.d.FA8938E729C1A145128176F5385C848B.e.44")&gt;]
+
+06_Automation_Regression/test_ui_selenium.py:148: AssertionError</failure></testcase><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_009_dashboard_counts" time="4.448" /><testcase classname="06_Automation_Regression.test_ui_selenium" name="test_AT_010_empty_title_blocked_in_browser" time="6.224" /></testsuite></testsuites>

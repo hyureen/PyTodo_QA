@@ -1,0 +1,572 @@
+.F..FFF.F....FF..F....F....F...F..FF.FF.FFFFFF.F.F.F                     [100%]
+=================================== FAILURES ===================================
+________________________ test_password_rules[TC-BB-010] ________________________
+
+client = <FlaskClient <Flask 'app'>>, password = 'abcdefgh'
+should_accept = True
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("password,should_accept", [
+        pytest.param("abcdefg", False, id="TC-BB-009"),
+        pytest.param("abcdefgh", True, id="TC-BB-010"),
+        pytest.param("abcdefghi", True, id="TC-BB-011"),
+        pytest.param("", False, id="TC-BB-012"),
+    ])
+    def test_password_rules(client, password, should_accept):
+        r = register(client, f"pw_user{len(password)}", password)
+        if should_accept:
+>           assert accepted(r), (f"Actual: {len(password)}-character password refused with "
+                                 f"'Password must be at least 8 characters.'")
+E           AssertionError: Actual: 8-character password refused with 'Password must be at least 8 characters.'
+E           assert False
+E            +  where False = accepted(<WrapperTestResponse streamed [200 OK]>)
+
+01_Black_Box/test_blackbox_web.py:94: AssertionError
+_____________________ test_TC_BB_014_dt_r2_username_taken ______________________
+
+client = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_BB_014_dt_r2_username_taken(client):
+        register(client, "dt_taken")
+        client.get("/logout")
+        r = register(client, "dt_taken", "Another123")
+>       assert not accepted(r), "Actual: duplicate username 'dt_taken' was registered again (HTTP 302 to /)"
+E       AssertionError: Actual: duplicate username 'dt_taken' was registered again (HTTP 302 to /)
+E       assert not True
+E        +  where True = accepted(<WrapperTestResponse streamed [302 FOUND]>)
+
+01_Black_Box/test_blackbox_web.py:113: AssertionError
+___________________ test_TC_BB_023_whitespace_title_rejected ___________________
+
+web_user = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_BB_023_whitespace_title_rejected(web_user):
+        before = len(ids_of(web_user))
+        new_task(web_user, "   ")
+        after = len(ids_of(web_user))
+>       assert after == before, "Actual: task with an empty title was created (blank row in My Tasks)"
+E       AssertionError: Actual: task with an empty title was created (blank row in My Tasks)
+E       assert 1 == 0
+
+01_Black_Box/test_blackbox_web.py:174: AssertionError
+___________________ test_TC_BB_024_special_characters_shown ____________________
+
+web_user = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_BB_024_special_characters_shown(web_user):
+        new_task(web_user, "Buy milk & eggs <urgent>")
+        _, html = page(web_user)
+>       assert "Buy milk &amp; eggs &lt;urgent&gt;" in html, \
+            "Actual: title inserted as raw HTML; '<urgent>' becomes an HTML tag and is not shown"
+E       AssertionError: Actual: title inserted as raw HTML; '<urgent>' becomes an HTML tag and is not shown
+E       assert 'Buy milk &amp; eggs &lt;urgent&gt;' in '<!doctype html>\n<html lang="en">\n<head>\n    <meta charset="utf-8">\n    <title>Tasks — PyTodo Pro</title>\n    <li...           </form>\n            </td>\n        </tr>\n        \n    </tbody>\n</table>\n\n    </div>\n</body>\n</html>'
+
+01_Black_Box/test_blackbox_web.py:181: AssertionError
+_________________________ test_urgency_bva[TC-BB-026] __________________________
+
+web_user = <FlaskClient <Flask 'app'>>, offset = 0, expected = 'Due Today'
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("offset,expected", [
+        pytest.param(-1, "Overdue", id="TC-BB-025"),
+        pytest.param(0, "Due Today", id="TC-BB-026"),
+        pytest.param(1, "Due Soon", id="TC-BB-027"),
+        pytest.param(2, "Due Soon", id="TC-BB-028"),
+        pytest.param(3, "Upcoming", id="TC-BB-029"),
+    ])
+    def test_urgency_bva(web_user, offset, expected):
+        title = f"Urgency check {offset}"
+        new_task(web_user, title, due_date=day(offset))
+        actual = badge_for(page(web_user)[1], title)
+>       assert actual == expected, f"Actual: badge '{actual}'"
+E       AssertionError: Actual: badge 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+01_Black_Box/test_blackbox_web.py:198: AssertionError
+_____________________ test_TC_BB_046_due_today_not_overdue _____________________
+
+web_user = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_BB_046_due_today_not_overdue(web_user):
+        new_task(web_user, "Due today", due_date=day(0))
+        _, html = page(web_user, "/dashboard")
+>       assert _stat(html, "Overdue") == 0, f"Actual: Overdue = {_stat(html, 'Overdue')}"
+E       AssertionError: Actual: Overdue = 1
+E       assert 1 == 0
+E        +  where 1 = _stat('<!doctype html>\n<html lang="en">\n<head>\n    <meta charset="utf-8">\n    <title>Dashboard — PyTodo Pro</title>\n   ...iv>\n        <div class="stat-label">Completed (last 7 days)</div>\n    </div>\n</div>\n\n    </div>\n</body>\n</html>', 'Overdue')
+
+01_Black_Box/test_blackbox_web.py:334: AssertionError
+____________________ test_TC_BB_049_invalid_date_from_form _____________________
+
+web_user = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_BB_049_invalid_date_from_form(web_user):
+        new_task(web_user, "Bad date", due_date="2026-13-45")
+        status, _ = page(web_user)
+>       assert status == 200, f"Actual: task was saved and My Tasks now returns HTTP {status} (Internal Server Error)"
+E       AssertionError: Actual: task was saved and My Tasks now returns HTTP 500 (Internal Server Error)
+E       assert 500 == 200
+
+01_Black_Box/test_blackbox_web.py:359: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    app:app.py:838 Exception on / [GET]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 121, in wrapper
+    return f(*args, **kwargs)
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 216, in index
+    tasks = [row_to_task(r, get_category_name(db, r["category_id"])) for r in rows]
+             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 94, in row_to_task
+    "urgency": compute_urgency(row["due_date"]) if not row["done"] else "Done",
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/helpers.py", line 31, in compute_urgency
+    due = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 789, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+                                    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 555, in _strptime
+    raise ValueError("time data %r does not match format %r" %
+                     (data_string, format))
+ValueError: time data '2026-13-45' does not match format '%Y-%m-%d'
+____________________ test_compute_urgency_paths[TC-WB-004] _____________________
+
+due = '2026-11-21', expected = 'Due Today'
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("due,expected", [
+        pytest.param(None, "No due date", id="TC-WB-001"),
+        pytest.param(d(-1), "Overdue", id="TC-WB-003"),
+        pytest.param(d(0), "Due Today", id="TC-WB-004"),
+        pytest.param(d(1), "Due Soon", id="TC-WB-005"),
+        pytest.param(d(2), "Due Soon", id="TC-WB-006"),
+        pytest.param(d(3), "Upcoming", id="TC-WB-007"),
+    ])
+    def test_compute_urgency_paths(due, expected):
+        actual = compute_urgency(due, today=TODAY)
+>       assert actual == expected, f"Actual: '{actual}'"
+E       AssertionError: Actual: 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+02_White_Box_Coverage/test_whitebox_helpers.py:50: AssertionError
+______________________ test_is_valid_password[TC-WB-010] _______________________
+
+pw = 'abcdefgh', expected = True
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("pw,expected", [
+        pytest.param(None, False, id="TC-WB-009"),
+        pytest.param("abcdefgh", True, id="TC-WB-010"),
+        pytest.param("abcdefghi", True, id="TC-WB-011"),
+        pytest.param("abcdefg", False, id="TC-WB-012"),
+    ])
+    def test_is_valid_password(pw, expected):
+        actual = is_valid_password(pw)
+>       assert actual is expected, f"Actual: {actual}"
+E       AssertionError: Actual: False
+E       assert False is True
+
+02_White_Box_Coverage/test_whitebox_helpers.py:76: AssertionError
+___________________ test_completed_in_last_n_days[TC-WB-021] ___________________
+
+completed = '2026-11-14 12:00:00', expected = True
+
+    @pytest.mark.unit
+    @pytest.mark.regression
+    @pytest.mark.parametrize("completed,expected", [
+        pytest.param(None, False, id="TC-WB-019"),
+        pytest.param(ts(timedelta(hours=1)), True, id="TC-WB-020"),
+        pytest.param(ts(timedelta(days=7)), True, id="TC-WB-021"),
+        pytest.param(ts(timedelta(days=8)), False, id="TC-WB-022"),
+        pytest.param(ts(timedelta(hours=-1)), False, id="TC-WB-023"),
+        pytest.param(ts(timedelta(days=6, hours=23)), True, id="TC-WB-025"),
+    ])
+    def test_completed_in_last_n_days(completed, expected):
+        actual = completed_in_last_n_days(completed, n=7, now=NOW)
+>       assert actual is expected, f"Actual: {actual}"
+E       AssertionError: Actual: False
+E       assert False is True
+
+02_White_Box_Coverage/test_whitebox_helpers.py:106: AssertionError
+______________________ test_TC_API_005_register_duplicate ______________________
+
+client = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_API_005_register_duplicate(client):
+        client.post("/api/register", json={"username": "api_dup", "password": VALID_PASSWORD})
+        r = client.post("/api/register", json={"username": "api_dup", "password": "Another123"})
+>       assert r.status_code in (400, 409), status_msg(r)
+E       AssertionError: Actual: HTTP 201, body {'id': 2, 'username': 'api_dup'}
+E       assert 201 in (400, 409)
+E        +  where 201 = <WrapperTestResponse streamed [201 CREATED]>.status_code
+
+04_Web_API/test_api.py:48: AssertionError
+_____________________ test_create_invalid_date[TC-API-017] _____________________
+
+user_a = <FlaskClient <Flask 'app'>>, bad = '2026-02-30'
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("bad", [pytest.param("2026-02-30", id="TC-API-017"),
+                                     pytest.param("21/11/2026", id="TC-API-018")])
+    def test_create_invalid_date(user_a, bad):
+        r = create_task(user_a, title="x", due_date=bad)
+>       assert r.status_code == 400, status_msg(r)
+E       AssertionError: Actual: HTTP 500, body '<!doctype html>\n<html lang=en>\n<title>500 Internal Server Er'
+E       assert 500 == 400
+E        +  where 500 = <WrapperTestResponse streamed [500 INTERNAL SERVER ERROR]>.status_code
+
+04_Web_API/test_api.py:118: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    app:app.py:838 Exception on /api/tasks [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 130, in wrapper
+    return f(*args, **kwargs)
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 420, in api_create_task
+    return jsonify(row_to_task(row, get_category_name(db, row["category_id"]))), 201
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 94, in row_to_task
+    "urgency": compute_urgency(row["due_date"]) if not row["done"] else "Done",
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/helpers.py", line 31, in compute_urgency
+    due = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 789, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+                                    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 755, in _strptime
+    julian = datetime_date(year, month, day).toordinal() - \
+             ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ValueError: day is out of range for month
+_____________________ test_create_invalid_date[TC-API-018] _____________________
+
+user_a = <FlaskClient <Flask 'app'>>, bad = '21/11/2026'
+
+    @pytest.mark.regression
+    @pytest.mark.parametrize("bad", [pytest.param("2026-02-30", id="TC-API-017"),
+                                     pytest.param("21/11/2026", id="TC-API-018")])
+    def test_create_invalid_date(user_a, bad):
+        r = create_task(user_a, title="x", due_date=bad)
+>       assert r.status_code == 400, status_msg(r)
+E       AssertionError: Actual: HTTP 500, body '<!doctype html>\n<html lang=en>\n<title>500 Internal Server Er'
+E       assert 500 == 400
+E        +  where 500 = <WrapperTestResponse streamed [500 INTERNAL SERVER ERROR]>.status_code
+
+04_Web_API/test_api.py:118: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    app:app.py:838 Exception on /api/tasks [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 130, in wrapper
+    return f(*args, **kwargs)
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 420, in api_create_task
+    return jsonify(row_to_task(row, get_category_name(db, row["category_id"]))), 201
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 94, in row_to_task
+    "urgency": compute_urgency(row["due_date"]) if not row["done"] else "Done",
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/helpers.py", line 31, in compute_urgency
+    due = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 789, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+                                    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/_strptime.py", line 555, in _strptime
+    raise ValueError("time data %r does not match format %r" %
+                     (data_string, format))
+ValueError: time data '21/11/2026' does not match format '%Y-%m-%d'
+______________________ test_TC_API_033_search_apostrophe _______________________
+
+user_a = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_API_033_search_apostrophe(user_a):
+        create_task(user_a, title="Mum's birthday")
+        r = user_a.get("/api/tasks?q=mum's")
+>       assert r.status_code == 200, status_msg(r)
+E       AssertionError: Actual: HTTP 500, body '<!doctype html>\n<html lang=en>\n<title>500 Internal Server Er'
+E       assert 500 == 200
+E        +  where 500 = <WrapperTestResponse streamed [500 INTERNAL SERVER ERROR]>.status_code
+
+04_Web_API/test_api.py:206: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    app:app.py:838 Exception on /api/tasks [GET]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 130, in wrapper
+    return f(*args, **kwargs)
+  File "/home/claude/repo/PyTodo_QA/app/app.py", line 384, in api_list_tasks
+    rows = db.execute(query, params).fetchall()
+           ~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.OperationalError: near "s": syntax error
+_______________________ test_TC_API_035_put_empty_title ________________________
+
+user_a = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_API_035_put_empty_title(user_a):
+        tid = create_task(user_a, title="Keep").get_json()["id"]
+        r = user_a.put(f"/api/tasks/{tid}", json={"title": ""})
+>       assert r.status_code == 400, status_msg(r)
+E       AssertionError: Actual: HTTP 200, body {'category': None, 'category_id': None, 'completed_at': None, 'created_at': '2026-11-21T02:31:06.355738', 'description': '', 'done': False, 'due_date': None, 'id': 1, 'title': '', 'urgency': 'No due date'}
+E       assert 200 == 400
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+04_Web_API/test_api.py:220: AssertionError
+___________________ test_TC_API_042_delete_other_users_task ____________________
+
+user_a = <FlaskClient <Flask 'app'>>, user_b = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_API_042_delete_other_users_task(user_a, user_b):
+        tid = create_task(user_b, title="B private").get_json()["id"]
+        r = user_a.delete(f"/api/tasks/{tid}")
+        still_there = user_b.get(f"/api/tasks/{tid}").status_code == 200
+>       assert still_there, f"Actual: HTTP {r.status_code} {r.get_json()} and qa_user2's task was deleted"
+E       AssertionError: Actual: HTTP 200 {'result': 'ok'} and qa_user2's task was deleted
+E       assert False
+
+04_Web_API/test_api.py:264: AssertionError
+____________________ test_TC_API_045_due_today_not_overdue _____________________
+
+user_a = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_API_045_due_today_not_overdue(user_a):
+        create_task(user_a, title="today", due_date=day(0))
+        got = user_a.get("/api/dashboard").get_json()
+>       assert got["overdue"] == 0, f"Actual: {got}"
+E       AssertionError: Actual: {'completed_this_week': 0, 'due_soon': 0, 'open': 1, 'overdue': 1, 'total': 1}
+E       assert 1 == 0
+
+04_Web_API/test_api.py:286: AssertionError
+________________ test_TC_SEC_003_forge_with_source_code_secret _________________
+
+fresh_app = <module 'app' from '/home/claude/repo/PyTodo_QA/app/app.py'>
+user_a = <FlaskClient <Flask 'app'>>, user_b = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_SEC_003_forge_with_source_code_secret(fresh_app, user_a, user_b):
+        create_task(user_b, title="qa_user2 secret plan")
+        secret_from_source = "pytodo-pro-dev-secret"   # copied from app.py line: app.config["SECRET_KEY"]
+        cookie = forge_session(fresh_app.app, secret_from_source, {"user_id": 2, "username": "qa_user2"})
+        attacker = fresh_app.app.test_client()
+        attacker.set_cookie("session", cookie)
+        r = attacker.get("/api/tasks")
+>       assert r.status_code == 401, (f"Actual: HTTP {r.status_code}; forged cookie accepted and attacker read "
+                                      f"{[t['title'] for t in r.get_json()]}")
+E       AssertionError: Actual: HTTP 200; forged cookie accepted and attacker read ['qa_user2 secret plan']
+E       assert 200 == 401
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+05_Security_Performance/test_security.py:52: AssertionError
+______________________ test_TC_SEC_008_cross_user_delete _______________________
+
+user_a = <FlaskClient <Flask 'app'>>, user_b = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_SEC_008_cross_user_delete(user_a, user_b):
+        tid = create_task(user_b, title="B task").get_json()["id"]
+        user_a.delete(f"/api/tasks/{tid}")
+>       assert user_b.get(f"/api/tasks/{tid}").status_code == 200, "Actual: qa_user1 deleted qa_user2's task"
+E       AssertionError: Actual: qa_user1 deleted qa_user2's task
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = get('/api/tasks/1')
+E        +      where get = <FlaskClient <Flask 'app'>>.get
+
+05_Security_Performance/test_security.py:93: AssertionError
+_______________________ test_TC_SEC_010_search_injection _______________________
+
+user_a = <FlaskClient <Flask 'app'>>, user_b = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_SEC_010_search_injection(user_a, user_b):
+        create_task(user_a, title="A task")
+        create_task(user_b, title="B confidential")
+        payload = "x%' OR user_id != 0 OR title LIKE '%"
+        r = user_a.get("/api/tasks", query_string={"q": payload})
+        titles = [t["title"] for t in r.get_json()] if r.status_code == 200 else []
+>       assert r.status_code in (200, 400) and "B confidential" not in titles, \
+            f"Actual: HTTP {r.status_code}; injected condition returned other user's data: {titles}"
+E       AssertionError: Actual: HTTP 200; injected condition returned other user's data: ['B confidential', 'A task']
+E       assert (200 in (200, 400) and 'B confidential' not in ['B confidential', 'A task'])
+E        +  where 200 = <WrapperTestResponse 396 bytes [200 OK]>.status_code
+
+05_Security_Performance/test_security.py:109: AssertionError
+__________________________ test_TC_SEC_012_stored_xss __________________________
+
+user_a = <FlaskClient <Flask 'app'>>
+
+    @pytest.mark.regression
+    def test_TC_SEC_012_stored_xss(user_a):
+        create_task(user_a, title="<img src=x onerror=alert(1)>")
+        html = user_a.get("/").get_data(as_text=True)
+>       assert "<img src=x onerror=alert(1)>" not in html, "Actual: title rendered as live HTML (script would run)"
+E       AssertionError: Actual: title rendered as live HTML (script would run)
+E       assert '<img src=x ...or=alert(1)>' not in '<!doctype h...dy>\n</html>'
+E         
+E         '<img src=x onerror=alert(1)>' is contained here:
+E           le-cell"><img src=x onerror=alert(1)></td>
+E                       <td>—</td>
+E                       <td>—</td>
+E                       <td><span class="badge badge-no-due-date">No due date</span></td>
+E                       <td class="actions">...
+E         
+E         ...Full output truncated (13 lines hidden), use '-vv' to show
+
+05_Security_Performance/test_security.py:123: AssertionError
+_______________________ test_AT_002_eight_char_password ________________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="1cac4ee30568a6b8b4b766c990dadba8")>
+
+    @pytest.mark.regression
+    def test_AT_002_eight_char_password(driver):
+        driver.delete_all_cookies()
+        page = RegisterPage(driver).open()
+        page.submit("ui_" + uuid.uuid4().hex[:8], "abcdefgh")
+        snap(driver, "AT-002_password_8_chars.png")
+>       assert page.heading() == "My Tasks", f"Actual: stayed on register page, message '{page.error()}'"
+E       AssertionError: Actual: stayed on register page, message 'Password must be at least 8 characters.'
+E       assert 'Create an account' == 'My Tasks'
+E         
+E         - My Tasks
+E         + Create an account
+
+06_Automation_Regression/test_ui_selenium.py:89: AssertionError
+_________________________ test_AT_004_due_today_badge __________________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="1cac4ee30568a6b8b4b766c990dadba8")>
+fresh_user = 'ui_8ea6de5b'
+
+    @pytest.mark.regression
+    def test_AT_004_due_today_badge(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task("Submit lab report", due_iso=iso(0))
+        snap(driver, "AT-004_due_today_badge.png")
+>       assert page.badge("Submit lab report") == "Due Today", f"Actual: '{page.badge('Submit lab report')}'"
+E       AssertionError: Actual: 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+06_Automation_Regression/test_ui_selenium.py:109: AssertionError
+____________________ test_AT_008_title_markup_not_rendered _____________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="1cac4ee30568a6b8b4b766c990dadba8")>
+fresh_user = 'ui_b3c18833'
+
+    @pytest.mark.regression
+    def test_AT_008_title_markup_not_rendered(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task('<b id="xss-probe">Bold title</b>')
+        snap(driver, "AT-008_html_in_title.png")
+        rendered = driver.find_elements(By.ID, "xss-probe")
+>       assert not rendered, "Actual: the <b> tag in the title was rendered as real HTML"
+E       AssertionError: Actual: the <b> tag in the title was rendered as real HTML
+E       assert not [<selenium.webdriver.remote.webelement.WebElement (session="1cac4ee30568a6b8b4b766c990dadba8", element="f.27059C6D8D2DD1945BBCEFDAA0F25938.d.F405D961B373B76CC721172C13B29F78.e.44")>]
+
+06_Automation_Regression/test_ui_selenium.py:148: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED 01_Black_Box/test_blackbox_web.py::test_password_rules[TC-BB-009]
+PASSED 01_Black_Box/test_blackbox_web.py::test_password_rules[TC-BB-011]
+PASSED 01_Black_Box/test_blackbox_web.py::test_password_rules[TC-BB-012]
+PASSED 01_Black_Box/test_blackbox_web.py::test_urgency_bva[TC-BB-025]
+PASSED 01_Black_Box/test_blackbox_web.py::test_urgency_bva[TC-BB-027]
+PASSED 01_Black_Box/test_blackbox_web.py::test_urgency_bva[TC-BB-028]
+PASSED 01_Black_Box/test_blackbox_web.py::test_urgency_bva[TC-BB-029]
+PASSED 01_Black_Box/test_blackbox_web.py::test_TC_BB_037_logged_out_redirect
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-001]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-003]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-005]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-006]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-007]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_is_valid_password[TC-WB-009]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_is_valid_password[TC-WB-011]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_is_valid_password[TC-WB-012]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-019]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-020]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-022]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-023]
+PASSED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-025]
+PASSED 04_Web_API/test_api.py::test_TC_API_010_tasks_need_login
+PASSED 04_Web_API/test_api.py::test_TC_API_013_create_full
+PASSED 04_Web_API/test_api.py::test_TC_API_024_get_other_users_task
+PASSED 04_Web_API/test_api.py::test_TC_API_037_put_other_users_task
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_001_register_lands_on_tasks
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_003_login_logout
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_005_complete_and_reopen
+FAILED 01_Black_Box/test_blackbox_web.py::test_password_rules[TC-BB-010] - As...
+FAILED 01_Black_Box/test_blackbox_web.py::test_TC_BB_014_dt_r2_username_taken
+FAILED 01_Black_Box/test_blackbox_web.py::test_TC_BB_023_whitespace_title_rejected
+FAILED 01_Black_Box/test_blackbox_web.py::test_TC_BB_024_special_characters_shown
+FAILED 01_Black_Box/test_blackbox_web.py::test_urgency_bva[TC-BB-026] - Asser...
+FAILED 01_Black_Box/test_blackbox_web.py::test_TC_BB_046_due_today_not_overdue
+FAILED 01_Black_Box/test_blackbox_web.py::test_TC_BB_049_invalid_date_from_form
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_compute_urgency_paths[TC-WB-004]
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_is_valid_password[TC-WB-010]
+FAILED 02_White_Box_Coverage/test_whitebox_helpers.py::test_completed_in_last_n_days[TC-WB-021]
+FAILED 04_Web_API/test_api.py::test_TC_API_005_register_duplicate - Assertion...
+FAILED 04_Web_API/test_api.py::test_create_invalid_date[TC-API-017] - Asserti...
+FAILED 04_Web_API/test_api.py::test_create_invalid_date[TC-API-018] - Asserti...
+FAILED 04_Web_API/test_api.py::test_TC_API_033_search_apostrophe - AssertionE...
+FAILED 04_Web_API/test_api.py::test_TC_API_035_put_empty_title - AssertionErr...
+FAILED 04_Web_API/test_api.py::test_TC_API_042_delete_other_users_task - Asse...
+FAILED 04_Web_API/test_api.py::test_TC_API_045_due_today_not_overdue - Assert...
+FAILED 05_Security_Performance/test_security.py::test_TC_SEC_003_forge_with_source_code_secret
+FAILED 05_Security_Performance/test_security.py::test_TC_SEC_008_cross_user_delete
+FAILED 05_Security_Performance/test_security.py::test_TC_SEC_010_search_injection
+FAILED 05_Security_Performance/test_security.py::test_TC_SEC_012_stored_xss
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_002_eight_char_password
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_004_due_today_badge
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_008_title_markup_not_rendered
+24 failed, 28 passed, 95 deselected in 10.43s

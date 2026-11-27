@@ -1,0 +1,67 @@
+.F.F...F..                                                               [100%]
+=================================== FAILURES ===================================
+_______________________ test_AT_002_eight_char_password ________________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")>
+
+    @pytest.mark.regression
+    def test_AT_002_eight_char_password(driver):
+        driver.delete_all_cookies()
+        page = RegisterPage(driver).open()
+        page.submit("ui_" + uuid.uuid4().hex[:8], "abcdefgh")
+        snap(driver, "AT-002_password_8_chars.png")
+>       assert page.heading() == "My Tasks", f"Actual: stayed on register page, message '{page.error()}'"
+E       AssertionError: Actual: stayed on register page, message 'Password must be at least 8 characters.'
+E       assert 'Create an account' == 'My Tasks'
+E         
+E         - My Tasks
+E         + Create an account
+
+06_Automation_Regression/test_ui_selenium.py:89: AssertionError
+_________________________ test_AT_004_due_today_badge __________________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")>
+fresh_user = 'ui_3f3257dd'
+
+    @pytest.mark.regression
+    def test_AT_004_due_today_badge(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task("Submit lab report", due_iso=iso(0))
+        snap(driver, "AT-004_due_today_badge.png")
+>       assert page.badge("Submit lab report") == "Due Today", f"Actual: '{page.badge('Submit lab report')}'"
+E       AssertionError: Actual: 'Overdue'
+E       assert 'Overdue' == 'Due Today'
+E         
+E         - Due Today
+E         + Overdue
+
+06_Automation_Regression/test_ui_selenium.py:109: AssertionError
+____________________ test_AT_008_title_markup_not_rendered _____________________
+
+driver = <selenium.webdriver.chrome.webdriver.WebDriver (session="b2766ddba6b26a3a42ba44379a5a7ce0")>
+fresh_user = 'ui_aa4652d4'
+
+    @pytest.mark.regression
+    def test_AT_008_title_markup_not_rendered(driver, fresh_user):
+        page = TaskListPage(driver)
+        page.new_task('<b id="xss-probe">Bold title</b>')
+        snap(driver, "AT-008_html_in_title.png")
+        rendered = driver.find_elements(By.ID, "xss-probe")
+>       assert not rendered, "Actual: the <b> tag in the title was rendered as real HTML"
+E       AssertionError: Actual: the <b> tag in the title was rendered as real HTML
+E       assert not [<selenium.webdriver.remote.webelement.WebElement (session="b2766ddba6b26a3a42ba44379a5a7ce0", element="f.909E5CFEB37D49EF1900B20A84CCCADA.d.FA8938E729C1A145128176F5385C848B.e.44")>]
+
+06_Automation_Regression/test_ui_selenium.py:148: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_001_register_lands_on_tasks
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_003_login_logout
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_005_complete_and_reopen
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_006_delete_with_confirm
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_007_category_filter
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_009_dashboard_counts
+PASSED 06_Automation_Regression/test_ui_selenium.py::test_AT_010_empty_title_blocked_in_browser
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_002_eight_char_password
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_004_due_today_badge
+FAILED 06_Automation_Regression/test_ui_selenium.py::test_AT_008_title_markup_not_rendered
+3 failed, 7 passed, 137 deselected in 21.50s
