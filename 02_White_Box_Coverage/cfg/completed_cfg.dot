@@ -1,0 +1,12 @@
+digraph G {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=12, label="CFG of completed_in_last_n_days()   N = 8, E = 10, P = 3   V(G) = 10 - 8 + 2 = 4", labelloc=t, nodesep=0.5, ranksep=0.35];
+  node [shape=circle, fontname="Helvetica", fontsize=11, width=0.45, fixedsize=true, color="#52514e"];
+  edge [fontname="Helvetica", fontsize=9, color="#52514e", arrowsize=0.7];
+  n1 [label="1", style=filled, fillcolor="#cde2fb"]; n3 [label="3", style=filled, fillcolor="#cde2fb"]; n5 [label="5", style=filled, fillcolor="#cde2fb"];
+  n2 [label="2"]; n4 [label="4"]; n6 [label="6"]; n7 [label="7"]; n8 [label="8", shape=doublecircle, width=0.5];
+  n1 -> n2 [label="T"]; n1 -> n3 [label="F"]; n2 -> n8;
+  n3 -> n4 [label="T"]; n3 -> n5 [label="F"]; n4 -> n5;
+  n5 -> n6 [label="T"]; n5 -> n7 [label="F"]; n6 -> n8; n7 -> n8;
+  legend [shape=note, fixedsize=false, width=3.9, fontsize=9.5, color="#b9b8b2", label="1  if not completed_at_str\l2  return False\l3  if now is None\l4  now = datetime.now()\l5  age = now - parse(...);\l    age.total_seconds() > 0 and age.days < n ?\l6  return True\l7  return False\l8  exit\l"];
+  {rank=same; n8; legend}
+}

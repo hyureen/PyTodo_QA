@@ -1,0 +1,258 @@
+{
+  "browser": "chrome 153.0.8010.12",
+  "date": "2026-11-21",
+  "pages": {
+    "01_login": {
+      "title": "Log in \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 11,
+        "violations": [
+          {
+            "examples": [
+              "input[type=\"text\"]",
+              "input[type=\"password\"]"
+            ],
+            "help": "Form elements must have labels",
+            "id": "label",
+            "impact": "critical",
+            "nodes": 2,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": false
+      }
+    },
+    "02_register": {
+      "title": "Register \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 11,
+        "violations": [
+          {
+            "examples": [
+              "input[type=\"text\"]",
+              "input[type=\"password\"]"
+            ],
+            "help": "Form elements must have labels",
+            "id": "label",
+            "impact": "critical",
+            "nodes": 2,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": false
+      }
+    },
+    "03_register_error": {
+      "title": "Register \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 11,
+        "violations": [
+          {
+            "examples": [
+              "input[type=\"text\"]",
+              "input[type=\"password\"]"
+            ],
+            "help": "Form elements must have labels",
+            "id": "label",
+            "impact": "critical",
+            "nodes": 2,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": false
+      }
+    },
+    "04_task_list": {
+      "title": "Tasks \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 13,
+        "violations": [
+          {
+            "examples": [
+              "select[name=\"category\"]",
+              "select[name=\"status\"]"
+            ],
+            "help": "Select element must have an accessible name",
+            "id": "select-name",
+            "impact": "critical",
+            "nodes": 2,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": true
+      }
+    },
+    "05_new_task_form": {
+      "title": "New Task \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 10,
+        "violations": [
+          {
+            "examples": [
+              "input[type=\"text\"]",
+              "textarea",
+              "input[type=\"date\"]"
+            ],
+            "help": "Form elements must have labels",
+            "id": "label",
+            "impact": "critical",
+            "nodes": 3,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          },
+          {
+            "examples": [
+              "select"
+            ],
+            "help": "Select element must have an accessible name",
+            "id": "select-name",
+            "impact": "critical",
+            "nodes": 1,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": true
+      }
+    },
+    "06_dashboard": {
+      "title": "Dashboard \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 7,
+        "violations": []
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": true
+      }
+    },
+    "07_empty_search": {
+      "title": "Tasks \u2014 PyTodo Pro",
+      "lang": "en",
+      "axe": {
+        "passes": 13,
+        "violations": [
+          {
+            "examples": [
+              "td"
+            ],
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": 1,
+            "wcag": [
+              "wcag2aa",
+              "wcag143"
+            ]
+          },
+          {
+            "examples": [
+              "select[name=\"category\"]",
+              "select[name=\"status\"]"
+            ],
+            "help": "Select element must have an accessible name",
+            "id": "select-name",
+            "impact": "critical",
+            "nodes": 2,
+            "wcag": [
+              "wcag2a",
+              "wcag412"
+            ]
+          }
+        ]
+      },
+      "horizontal_scroll": {
+        "desktop_1366x768": false,
+        "tablet_768x1024": false,
+        "phone_375x812": true
+      }
+    }
+  },
+  "keyboard": {
+    "login_tab_order": [
+      [
+        "a",
+        "PyTodo Pro",
+        "auto"
+      ],
+      [
+        "input",
+        "username",
+        "auto"
+      ],
+      [
+        "input",
+        "password",
+        "auto"
+      ],
+      [
+        "button",
+        "Log in",
+        "auto"
+      ],
+      [
+        "a",
+        "Register",
+        "auto"
+      ],
+      [
+        "body",
+        "PyTodo Pro\nLog in\nUs",
+        "none"
+      ],
+      [
+        "a",
+        "PyTodo Pro",
+        "auto"
+      ]
+    ]
+  },
+  "error_page": {
+    "shows_traceback": true,
+    "shows_werkzeug_debugger": true,
+    "title": "ValueError: time data '2026-13-45' does not match format '%Y-%m-%d' // Werkzeug Debugger"
+  }
+}
