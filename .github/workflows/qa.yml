@@ -1,0 +1,44 @@
+# Example CI/CD pipeline for PyTodo Pro (Section 12.2 of the report).
+# Fast checks run first and stop the pipeline early (quality gates).
+# Known-defect tests are expected to fail until the developers fix them, so this
+# example runs only when started by hand (Actions tab -> PyTodo Pro QA -> Run workflow).
+# In a real team the trigger would be:  on: [push, pull_request]
+name: PyTodo Pro QA
+
+on: workflow_dispatch
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install bandit flake8
+      - run: bandit -r app -ll            # SAST: finds f-string SQL, hard-coded secret, debug=True
+      - run: flake8 app --max-line-length 120
+
+  unit-and-api:
+    needs: static-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r app/requirements.txt pytest pytest-cov
+      - run: pytest -m "unit" --cov=app --cov-branch --cov-fail-under=90
+      - run: pytest -m "regression and not ui" --junitxml=regression.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: regression-report, path: regression.xml }
+
+  ui-smoke:
+    needs: unit-and-api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r app/requirements.txt pytest selenium
+      - run: (cd app && python app.py &) && sleep 3
+      - run: pytest -m ui -v
