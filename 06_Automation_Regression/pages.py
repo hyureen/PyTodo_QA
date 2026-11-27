@@ -3,6 +3,7 @@ Page Object Model for PyTodo Pro (Chapter 6: keep test logic apart from UI
 locators, so a changed button only needs fixing in one place).
 """
 
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
@@ -77,9 +78,18 @@ class TaskListPage(BasePage):
         return r.find_element(By.CSS_SELECTOR, ".badge").text if r else None
 
     def toggle(self, title):
-        old = self.d.find_element(By.TAG_NAME, "html")
+        """Click the ○/✓ button, then wait until the badge for that task changes.
+        (Waiting for the badge text is more reliable on slower laptops than waiting
+        for the old page to go stale.)"""
+        before = self.badge(title)
         self.row(title).find_element(By.CSS_SELECTOR, "button.check-btn").click()
-        self.wait.until(EC.staleness_of(old))
+
+        def changed(_):
+            try:
+                return self.badge(title) not in (None, before)
+            except StaleElementReferenceException:
+                return False      # page still reloading: try again
+        WebDriverWait(self.d, 10, ignored_exceptions=[StaleElementReferenceException]).until(changed)
 
     def delete(self, title):
         old = self.d.find_element(By.TAG_NAME, "html")
